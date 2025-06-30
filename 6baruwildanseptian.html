@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WILDAN SEPTIAN CASHFLOW</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* CSS Variables for Theming */
+        :root {
+            /* Dark Theme (Default) */
+            --bg-primary: #1a202c;
+            --bg-card: #2d3748;
+            --text-primary: #e2e8f0;
+            --text-secondary: #cbd5e0; /* For lighter text elements */
+            --input-bg: #4a5568;
+            --input-border: #4a5568;
+            --table-header-bg: #2c5282;
+            --border-color: #4a5568;
+
+            /* Accent Colors (can be adjusted for themes if needed, but keeping consistent for now) */
+            --accent-sky: #4299e1;
+            --accent-green: #34D399;
+            --accent-red: #EF4444;
+            --accent-purple: #9F7AEA;
+            --accent-teal: #38B2AC;
+        }
+
+        body.light-mode {
+            /* Light Theme Overrides */
+            --bg-primary: #f7fafc;
+            --bg-card: #ffffff;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --input-bg: #edf2f7;
+            --input-border: #cbd5e0;
+            --table-header-bg: #63b3ed; /* A slightly brighter blue for light mode table header */
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out, opacity 0.5s ease-in-out;
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .card {
+            background-color: var(--bg-card);
+            border-radius: 0.75rem;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            padding: 2rem;
+            transition: background-color 0.5s ease-in-out;
+        }
+        .input-field, .select-field {
+            background-color: var(--input-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--input-border);
+            border-radius: 0.375rem;
+            padding: 0.75rem 1rem;
+            transition: all 0.2s;
+        }
+        .input-field:focus, .select-field:focus {
+            outline: none;
+            border-color: var(--accent-sky);
+            box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.5);
+        }
+        .btn-primary {
+            background-color: var(--accent-sky);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .btn-primary:hover {
+            background-color: #3182ce; /* Slightly darker sky blue */
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background-color: var(--input-bg); /* Use input background for secondary button */
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: background-color 0.2s, transform 0.1s, color 0.5s ease-in-out;
+        }
+        .btn-secondary:hover {
+            background-color: var(--border-color); /* Lighter hover for secondary */
+            transform: translateY(-1px);
+        }
+        .btn-danger {
+            background-color: var(--accent-red);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .btn-danger:hover {
+            background-color: #c53030;
+            transform: translateY(-1px);
+        }
+        .table-header {
+            background-color: var(--table-header-bg);
+            color: white;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: background-color 0.5s ease-in-out;
+        }
+        .table-row {
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.5s ease-in-out;
+        }
+        .table-row:last-child {
+            border-bottom: none;
+        }
+        .table-row:nth-child(even) {
+            background-color: var(--bg-card); /* Use card background for even rows */
+        }
+        .table-row:nth-child(odd) {
+            background-color: var(--bg-primary); /* Use primary background for odd rows */
+        }
+        /* Specific text colors (keep consistent for accents) */
+        .text-green-400 { color: var(--accent-green); }
+        .text-red-400 { color: var(--accent-red); }
+        .text-purple-400 { color: var(--accent-purple); }
+        .text-sky-400 { color: var(--accent-sky); }
+        .text-teal-400 { color: var(--accent-teal); }
+        .text-yellow-400 { color: #f6e05e; } /* Keep yellow consistent for warnings */
+        .text-green-500 { color: #48bb78; } /* Keep green consistent for success */
+        .text-red-500 { color: #f56565; } /* Keep red consistent for errors */
+
+        .icon {
+            display: inline-block;
+            width: 1.25em;
+            height: 1.25em;
+            vertical-align: text-bottom;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: 100%;
+            /* Invert icon color for light mode */
+            filter: var(--icon-filter, none);
+        }
+        body.light-mode .icon {
+            filter: var(--icon-filter-light, invert(1)); /* Apply invert for light mode icons by default */
+        }
+
+        /* SVG icons for better visibility in dark mode */
+        .icon-plus { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23e2e8f0'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 6v6m0 0v6m0-6h6m-6 0H6'%3E%3C/path%3E%3C/svg%3E"); }
+        .icon-minus { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23e2e8f0'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M18 12H6'%3E%3C/path%3E%3C/svg%3E"); }
+        .icon-money { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23e2e8f0'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m0 0l-3 3m3-3l3 3m7-12h2a2 2 0 012 2v6a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2zm-7 4h.01'%3E%3C/path%3E%3C/svg%3E"); }
+        .icon-infaq { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23e2e8f0'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m0 0l-3 3m3-3l3 3m7-12h2a2 2 0 012 2v6a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2zm-7 4h.01'%3E%3C/path%3E%3C/svg%3E"); }
+        .icon-user { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23e2e8f0'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'%3E%3C/path%3E%3C/svg%3E"); }
+        .icon-pencil { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23e2e8f0'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z'%3E%3C/path%3E%3C/svg%3E"); }
+        .icon-chart { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23e2e8f0'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z'%3E%3C/path%3E%3C/svg%3E"); }
+        .icon-piggy-bank { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23e2e8f0'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M14 10l-2 1m0 0l-2-1m2 1V3m2 7a2 2 0 11-4 0 2 2 0 014 0zM7 21h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v12a2 2 0 002 2zM9 9h6v6H9V9z'%3E%3C/path%3E%3C/svg%3E"); }
+        .icon-wallet { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23e2e8f0'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z'%3E%3C/path%3E%3C/svg%3E"); }
+        .icon-cog { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23e2e8f0'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M10.325 4.317c.52-1.785 2.05-1.785 2.57 0m-2.57 0l-2.05 1.05m2.05-1.05V2m-2.57 0l-.515 2.15C7.228 5.728 6 7.432 6 9.5c0 1.95.89 3.7 2.37 4.9C9.72 15.68 11.5 16.5 13.5 16.5c1.95 0 3.7-.89 4.9-2.37C19.68 13.5 20.5 11.75 20.5 9.75c0-1.95-.89-3.7-2.37-4.9-.11-.08-.2-.18-.28-.27l-2.05-1.05m-2.57 0H14m-1.5-1.5l.515-2.15C16.772 5.728 18 7.432 18 9.5c0 1.95-.89 3.7-2.37 4.9C14.28 15.68 12.5 16.5 10.5 16.5c-1.95 0-3.7-.89-4.9-2.37C4.32 13.5 3.5 11.75 3.5 9.75c0-1.95.89-3.7 2.37-4.9-.11-.08-.2-.18-.28-.27L6.5 2M12 21v-2m-1.5 0h3m-1.5 0a2 2 0 10-3 0 2 2 0 003 0z'%3E%3C/path%3E%3C/svg%3E"); }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 antialiased p-6">
+    <div id="loginPage" class="flex items-center justify-center min-h-screen">
+        <div class="card p-8 w-full max-w-md text-center">
+            <h1 class="text-4xl font-bold text-sky-400 mb-6">Login ke WILDAN SEPTIAN CASHFLOW</h1>
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <input type="text" id="username" class="input-field w-full" placeholder="Nama Pengguna (wildan)" required>
+                </div>
+                <div>
+                    <input type="password" id="password" class="input-field w-full" placeholder="Kata Sandi (admin123)" required>
+                </div>
+                <button type="submit" class="btn-primary w-full text-xl flex items-center justify-center">
+                    <span class="icon icon-user mr-2"></span> Masuk
+                </button>
+            </form>
+            <p class="text-red-500 mt-4 hidden" id="loginError">Nama pengguna atau kata sandi salah.<br>Pastikan "wildan" dan "admin123".</p>
+        </div>
+    </div>
+
+    <div id="mainApp" class="container mx-auto hidden opacity-0">
+        <header class="flex justify-between items-center mb-10">
+            <h1 class="text-5xl font-bold text-sky-400">WILDAN SEPTIAN CASHFLOW</h1>
+            <div class="flex space-x-4">
+                <button id="dashboardButton" class="btn-secondary flex items-center hidden">
+                    <span class="icon icon-chart mr-2"></span> Dashboard
+                </button>
+                <button id="settingsButton" class="btn-secondary flex items-center">
+                    <span class="icon icon-cog mr-2"></span> Pengaturan
+                </button>
+                <button id="logoutButton" class="btn-secondary flex items-center">
+                    <span class="icon icon-user mr-2"></span> Logout
+                </button>
+            </div>
+        </header>
+
+        <div id="dashboardContent">
+            <main class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
+                <div class="card p-6 text-center flex flex-col justify-center items-center">
+                    <h2 class="text-2xl font-semibold text-green-400 mb-2 flex items-center justify-center">
+                        <span class="icon icon-plus mr-2"></span> Total Pemasukan
+                    </h2>
+                    <p id="totalPemasukan" class="text-4xl font-bold">Rp 0</p>
+                </div>
+                <div class="card p-6 text-center flex flex-col justify-center items-center">
+                    <h2 class="text-2xl font-semibold text-red-400 mb-2 flex items-center justify-center">
+                        <span class="icon icon-minus mr-2"></span> Total Pengeluaran
+                    </h2>
+                    <p id="totalPengeluaran" class="text-4xl font-bold">Rp 0</p>
+                </div>
+                <div class="card p-6 text-center flex flex-col justify-center items-center">
+                    <h2 class="text-2xl font-semibold text-purple-400 mb-2 flex items-center justify-center">
+                        <span class="icon icon-infaq mr-2"></span> Total Infaq (2.5%)
+                    </h2>
+                    <p id="totalInfaq" class="text-4xl font-bold">Rp 0</p>
+                </div>
+                <div class="card p-6 text-center flex flex-col justify-center items-center">
+                    <h2 class="text-2xl font-semibold text-sky-400 mb-2 flex items-center justify-center">
+                        <span class="icon icon-wallet mr-2"></span> Saldo Kas Tersedia
+                    </h2>
+                    <p id="saldoKasTersedia" class="text-4xl font-bold">Rp 0</p>
+                </div>
+                <div class="card p-6 text-center flex flex-col justify-center items-center md:col-span-4">
+                    <h2 class="text-2xl font-semibold text-teal-400 mb-2 flex items-center justify-center">
+                        <span class="icon icon-piggy-bank mr-2"></span> Saldo Tabungan (Manual)
+                    </h2>
+                    <p id="manualSavingsTotal" class="text-4xl font-bold">Rp 0</p>
+                </div>
+            </main>
+
+            <section class="mb-8">
+                <p id="currentMonthDisplay" class="text-gray-400 text-lg mb-4 text-center">Data untuk Bulan: </p>
+            </section>
+
+            <section class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+                <div class="card p-8">
+                    <h2 class="text-3xl font-bold text-sky-400 mb-6 border-b border-gray-700 pb-4">Input Transaksi Baru</h2>
+                    <form id="transactionForm" class="space-y-6">
+                        <div>
+                            <label for="type" class="block text-gray-400 text-lg font-medium mb-2">Jenis Transaksi</label>
+                            <select id="type" class="select-field w-full" required>
+                                <option value="">Pilih Jenis</option>
+                                <option value="pemasukan_gaji">Pemasukan (Gaji Bulanan)</option>
+                                <option value="pemasukan_lain">Pemasukan Lainnya</option>
+                                <option value="pengeluaran">Pengeluaran</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="amount" class="block text-gray-400 text-lg font-medium mb-2">Jumlah (Rp)</label>
+                            <input type="number" id="amount" class="input-field w-full" placeholder="Masukkan jumlah" min="0" required>
+                        </div>
+                        <div>
+                            <label for="description" class="block text-gray-400 text-lg font-medium mb-2">Deskripsi</label>
+                            <input type="text" id="description" class="input-field w-full" placeholder="Contoh: Gaji bulan Juni, Belanja bulanan">
+                        </div>
+                        <div class="flex justify-end gap-4">
+                            <button type="submit" id="submitBtn" class="btn-primary flex-grow text-xl flex items-center justify-center">
+                                <span class="icon icon-plus mr-2"></span> Tambah Transaksi
+                            </button>
+                            <button type="button" id="cancelEditBtn" class="btn-secondary hidden">Batal Edit</button>
+                        </div>
+                        <input type="hidden" id="editTransactionId">
+                    </form>
+                </div>
+
+                <div class="card p-8 flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-3xl font-bold text-sky-400 mb-6 border-b border-gray-700 pb-4 flex items-center">
+                            <span class="icon icon-chart mr-2"></span> Ringkasan Keuangan Bulanan
+                        </h2>
+                        <div class="relative h-64 md:h-80">
+                            <canvas id="financeChart"></canvas>
+                        </div>
+                    </div>
+                </div >
+            </section>
+
+            <section class="card p-8 mb-10">
+                <h2 class="text-3xl font-bold text-sky-400 mb-6 border-b border-gray-700 pb-4 flex items-center">
+                    <span class="icon icon-piggy-bank mr-2"></span> Manajemen Tabungan Manual
+                </h2>
+                <p class="text-yellow-400 text-sm mb-4">Kelola saldo tabungan Anda secara terpisah dari kas harian. Transfer akan memengaruhi "Saldo Kas Tersedia".</p>
+                <form id="savingsForm" class="space-y-6">
+                    <div>
+                        <label for="savingsAmount" class="block text-gray-400 text-lg font-medium mb-2">Jumlah (Rp)</label>
+                        <input type="number" id="savingsAmount" class="input-field w-full" placeholder="Masukkan jumlah" min="0" required>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <button type="button" id="transferToSavingsBtn" class="btn-primary text-xl flex items-center justify-center">
+                            <span class="icon icon-plus mr-2"></span> Transfer ke Tabungan
+                        </button>
+                        <button type="button" id="transferAllToSavingsBtn" class="btn-primary text-xl flex items-center justify-center bg-purple-600 hover:bg-purple-700">
+                            <span class="icon icon-plus mr-2"></span> Transfer Seluruh Saldo Kas
+                        </button>
+                        <button type="button" id="withdrawFromSavingsBtn" class="btn-danger text-xl flex items-center justify-center">
+                            <span class="icon icon-minus mr-2"></span> Tarik dari Tabungan
+                        </button>
+                    </div>
+                    <p class="text-red-500 mt-4 hidden" id="savingsError"></p>
+                    <p class="text-green-500 mt-4 hidden" id="savingsSuccess"></p>
+                </form>
+            </section>
+
+            <section class="card p-8">
+                <h2 class="text-3xl font-bold text-sky-400 mb-6 border-b border-gray-700 pb-4">Riwayat Transaksi Bulan Ini</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-left whitespace-nowrap">
+                        <thead>
+                            <tr>
+                                <th class="table-header rounded-tl-lg">Tanggal</th>
+                                <th class="table-header">Jenis</th>
+                                <th class="table-header">Deskripsi</th>
+                                <th class="table-header text-right">Jumlah</th>
+                                <th class="table-header text-right">Potongan Infaq (2.5%)</th>
+                                <th class="table-header rounded-tr-lg text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionList">
+                            </tbody>
+                    </table>
+                </div>
+                <div id="noTransactions" class="text-center py-8 text-gray-500 text-lg hidden">Belum ada transaksi tercatat untuk bulan ini.</div>
+            </section>
+        </div> <div id="settingsPage" class="hidden">
+            <h2 class="text-4xl font-bold text-sky-400 mb-8 text-center">Pengaturan Aplikasi</h2>
+
+            <section class="card p-8 mb-10">
+                <h3 class="text-3xl font-bold text-sky-400 mb-6 border-b border-gray-700 pb-4 flex items-center">
+                    <span class="icon icon-cog mr-2"></span> Tampilan Website
+                </h3>
+                <div class="flex items-center space-x-4">
+                    <span class="text-lg text-gray-400">Pilih Tema:</span>
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="radio" name="theme" value="dark" class="form-radio h-5 w-5 text-sky-600" checked>
+                        <span class="ml-2 text-lg text-gray-200">Tema Gelap</span>
+                    </label>
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="radio" name="theme" value="light" class="form-radio h-5 w-5 text-sky-600">
+                        <span class="ml-2 text-lg text-gray-200">Tema Terang</span>
+                    </label>
+                </div>
+                <p class="text-green-500 mt-4 hidden" id="themeSuccess"></p>
+            </section>
+
+            <section class="card p-8 mb-10">
+                <h3 class="text-3xl font-bold text-sky-400 mb-6 border-b border-gray-700 pb-4 flex items-center">
+                    <span class="icon icon-cog mr-2"></span> Pengaturan Otomatisasi
+                </h3>
+                <form id="automationSettingsForm" class="space-y-6">
+                    <div>
+                        <label for="autoSavingsPercentage" class="block text-gray-400 text-lg font-medium mb-2">
+                            Persentase Tabungan Otomatis dari Pemasukan (%)
+                        </label>
+                        <input type="number" id="autoSavingsPercentage" class="input-field w-full" placeholder="Contoh: 10 (untuk 10%)" min="0" max="100">
+                        <p class="text-gray-500 text-sm mt-1">Setiap pemasukan akan otomatis dipotong untuk tabungan.</p>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="submit" class="btn-primary text-xl">Simpan Pengaturan Otomatisasi</button>
+                    </div>
+                    <p class="text-red-500 mt-4 hidden" id="automationError"></p>
+                    <p class="text-green-500 mt-4 hidden" id="automationSuccess"></p>
+                </form>
+            </section>
+
+            <section class="card p-8 mb-10">
+                <h3 class="text-3xl font-bold text-red-400 mb-6 border-b border-gray-700 pb-4 flex items-center">
+                    <span class="icon icon-minus mr-2"></span> Reset Data
+                </h3>
+                <p class="text-gray-400 text-sm mb-4">Pilih opsi reset data di bawah ini:</p>
+                <div class="space-y-4">
+                    <button type="button" id="resetCurrentMonthTransactionsBtn" class="btn-danger w-full text-lg">Reset Transaksi Bulan Ini</button>
+                    <p class="text-gray-500 text-sm">Hanya menghapus transaksi bulan ini dari riwayat. Data bulanan sebelumnya dan saldo tabungan tidak terpengaruh.</p>
+                    <button type="button" id="resetAllDataBtn" class="btn-danger w-full text-lg bg-red-800 hover:bg-red-900">RESET SELURUH DATA APLIKASI (PERMANEN)</button>
+                    <p class="text-yellow-400 text-sm">Menghapus semua transaksi, saldo tabungan, dan mengembalikan kredensial login ke default (wildan/admin123). **Tindakan ini tidak dapat dibatalkan.**</p>
+                </div>
+            </section>
+
+            <section class="card p-8 mb-10">
+                <h3 class="text-3xl font-bold text-sky-400 mb-6 border-b border-gray-700 pb-4 flex items-center">
+                    <span class="icon icon-user mr-2"></span> Ubah Akses Pengguna
+                </h3>
+                <p class="text-yellow-400 text-sm">
+                    Perhatian: Ubah Nama Pengguna dan Kata Sandi Anda di sini.
+                    Mengubah nama pengguna akan memindahkan semua data transaksi dan tabungan Anda ke nama pengguna baru ini.
+                    Anda akan diminta login ulang setelah perubahan berhasil.
+                </p>
+                <form id="changeAccessForm" class="space-y-6 mt-4">
+                    <div>
+                        <label for="oldUsername" class="block text-gray-400 text-lg font-medium mb-2">Nama Pengguna Lama</label>
+                        <input type="text" id="oldUsername" class="input-field w-full" required>
+                    </div>
+                    <div>
+                        <label for="oldPassword" class="block text-gray-400 text-lg font-medium mb-2">Kata Sandi Lama</label>
+                        <input type="password" id="oldPassword" class="input-field w-full" required>
+                    </div>
+                    <div class="border-t border-gray-700 pt-6 mt-6">
+                        <label for="newUsername" class="block text-gray-400 text-lg font-medium mb-2">Nama Pengguna Baru</label>
+                        <input type="text" id="newUsername" class="input-field w-full" required>
+                    </div>
+                    <div>
+                        <label for="newPassword" class="block text-gray-400 text-lg font-medium mb-2">Kata Sandi Baru</label>
+                        <input type="password" id="newPassword" class="input-field w-full" required>
+                    </div>
+                    <div>
+                        <label for="confirmNewPassword" class="block text-gray-400 text-lg font-medium mb-2">Konfirmasi Kata Sandi Baru</label>
+                        <input type="password" id="confirmNewPassword" class="input-field w-full" required>
+                    </div>
+                    <div class="flex justify-end gap-4">
+                        <button type="submit" class="btn-primary flex-grow text-xl">Simpan Perubahan</button>
+                    </div>
+                    <p class="text-red-500 mt-4 hidden" id="changeLoginError"></p>
+                    <p class="text-green-500 mt-4 hidden" id="changeLoginSuccess"></p>
+                </form>
+            </section>
+
+        </div> </div> <script>
+        // --- DOM Elements ---
+        const loginPage = document.getElementById('loginPage');
+        const mainApp = document.getElementById('mainApp');
+        const dashboardContent = document.getElementById('dashboardContent');
+        const settingsPage = document.getElementById('settingsPage');
+        const loginForm = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginError = document.getElementById('loginError');
+        const logoutButton = document.getElementById('logoutButton');
+        const settingsButton = document.getElementById('settingsButton');
+        const dashboardButton = document.getElementById('dashboardButton'); // New: Dashboard Button
+
+        const transactionForm = document.getElementById('transactionForm');
+        const typeInput = document.getElementById('type');
+        const amountInput = document.getElementById('amount');
+        const descriptionInput = document.getElementById('description');
+        const submitBtn = document.getElementById('submitBtn');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+        const editTransactionIdInput = document.getElementById('editTransactionId');
+
+        const transactionList = document.getElementById('transactionList');
+        const totalPemasukanEl = document.getElementById('totalPemasukan');
+        const totalPengeluaranEl = document.getElementById('totalPengeluaran');
+        const totalInfaqEl = document.getElementById('totalInfaq');
+        const saldoKasTersediaEl = document.getElementById('saldoKasTersedia');
+        const manualSavingsTotalEl = document.getElementById('manualSavingsTotal');
+        const noTransactionsEl = document.getElementById('noTransactions');
+        const financeChartCanvas = document.getElementById('financeChart');
+        const currentMonthDisplayEl = document.getElementById('currentMonthDisplay');
+
+        // Elements for Savings Management
+        const savingsForm = document.getElementById('savingsForm');
+        const savingsAmountInput = document.getElementById('savingsAmount');
+        const transferToSavingsBtn = document.getElementById('transferToSavingsBtn');
+        const transferAllToSavingsBtn = document.getElementById('transferAllToSavingsBtn');
+        const withdrawFromSavingsBtn = document.getElementById('withdrawFromSavingsBtn');
+        const savingsErrorEl = document.getElementById('savingsError');
+        const savingsSuccessEl = document.getElementById('savingsSuccess');
+
+        // Elements for Change Access Login
+        const changeAccessForm = document.getElementById('changeAccessForm');
+        const oldUsernameInput = document.getElementById('oldUsername');
+        const oldPasswordInput = document.getElementById('oldPassword');
+        const newUsernameInput = document.getElementById('newUsername');
+        const newPasswordInput = document.getElementById('newPassword');
+        const confirmNewPasswordInput = document.getElementById('confirmNewPassword');
+        const changeLoginErrorEl = document.getElementById('changeLoginError');
+        const changeLoginSuccessEl = document.getElementById('changeLoginSuccess');
+
+        // Elements for Theme Settings
+        const themeRadios = document.querySelectorAll('input[name="theme"]');
+        const themeSuccessEl = document.getElementById('themeSuccess');
+
+        // Elements for Reset Data
+        const resetCurrentMonthTransactionsBtn = document.getElementById('resetCurrentMonthTransactionsBtn');
+        const resetAllDataBtn = document.getElementById('resetAllDataBtn');
+
+        // Elements for Automation Settings
+        const automationSettingsForm = document.getElementById('automationSettingsForm');
+        const autoSavingsPercentageInput = document.getElementById('autoSavingsPercentage');
+        const automationErrorEl = document.getElementById('automationError');
+        const automationSuccessEl = document.getElementById('automationSuccess');
+
+        // --- Local Storage Keys ---
+        const USERNAME_LS_KEY = 'wsc_username';
+        const PASSWORD_LS_KEY = 'wsc_password';
+        const MANUAL_SAVINGS_LS_KEY = 'wsc_manual_savings';
+        const THEME_LS_KEY = 'wsc_theme';
+        const AUTO_SAVINGS_PERCENTAGE_LS_KEY = 'wsc_auto_savings_percentage'; // New key for auto savings percentage
+
+        // --- Global Variables (Mutable) ---
+        let USERNAME = localStorage.getItem(USERNAME_LS_KEY);
+        let PASSWORD = localStorage.getItem(PASSWORD_LS_KEY);
+        let transactions = [];
+        let manualSavingsBalance = 0;
+        let autoSavingsPercentage = parseFloat(localStorage.getItem(AUTO_SAVINGS_PERCENTAGE_LS_KEY)) || 0; // Load auto savings percentage
+        let financeChart;
+        let currentTheme = localStorage.getItem(THEME_LS_KEY) || 'dark';
+
+        // --- Initial Credential & Settings Setup ---
+        // Initialize default credentials if not found in localStorage
+        if (!USERNAME) {
+            USERNAME = 'wildan';
+            localStorage.setItem(USERNAME_LS_KEY, USERNAME);
+        }
+        if (!PASSWORD) {
+            PASSWORD = 'admin123';
+            localStorage.setItem(PASSWORD_LS_KEY, PASSWORD);
+        }
+        // Initialize default theme if not found
+        if (!localStorage.getItem(THEME_LS_KEY)) {
+            localStorage.setItem(THEME_LS_KEY, 'dark');
+        }
+        // Initialize default auto savings percentage if not found
+        if (!localStorage.getItem(AUTO_SAVINGS_PERCENTAGE_LS_KEY)) {
+            localStorage.setItem(AUTO_SAVINGS_PERCENTAGE_LS_KEY, '0'); // Default to 0%
+        }
+
+        // --- Utility Functions ---
+        const formatCurrency = (amount) => {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
+        };
+
+        const resetMessages = (element) => {
+            if (element) {
+                element.classList.add('hidden');
+                element.textContent = '';
+            }
+        };
+
+        const showMessage = (element, message, isError = false) => {
+            if (element) {
+                element.textContent = message;
+                element.classList.remove('hidden');
+                element.className = isError ? 'text-red-500 mt-4' : 'text-green-500 mt-4';
+            }
+        };
+
+        const resetAllFeedbackMessages = () => {
+            resetMessages(savingsErrorEl);
+            resetMessages(savingsSuccessEl);
+            resetMessages(changeLoginErrorEl);
+            resetMessages(changeLoginSuccessEl);
+            resetMessages(loginError);
+            resetMessages(themeSuccessEl);
+            resetMessages(automationErrorEl);
+            resetMessages(automationSuccessEl);
+        };
+
+        // --- Core Application Logic ---
+        const calculateTotals = () => {
+            let totalPemasukan = 0;
+            let totalPengeluaran = 0;
+            let totalInfaq = 0; // This will now sum actual infaq expense transactions
+
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+
+            const currentMonthTransactions = transactions.filter(transaction => {
+                const transactionDate = new Date(transaction.date);
+                return transactionDate.getMonth() === currentMonth && transactionDate.getFullYear() === currentYear;
+            });
+
+            currentMonthTransactions.forEach(transaction => {
+                if (transaction.type === 'pemasukan_gaji' || transaction.type === 'pemasukan_lain') {
+                    totalPemasukan += transaction.amount;
+                } else if (transaction.type === 'pengeluaran') {
+                    totalPengeluaran += transaction.amount;
+                } else if (transaction.type === 'pengeluaran_infaq') { // Sum actual infaq expenses
+                    totalPengeluaran += transaction.amount;
+                    totalInfaq += transaction.amount;
+                } else if (transaction.type === 'transfer_ke_tabungan') {
+                    totalPengeluaran += transaction.amount; // Transfer out from cash
+                } else if (transaction.type === 'pengeluaran_auto_tabungan') { // Auto transfer out from cash
+                    totalPengeluaran += transaction.amount;
+                } else if (transaction.type === 'tarik_dari_tabungan') {
+                    totalPemasukan += transaction.amount; // Transfer in to cash
+                }
+            });
+
+            const saldoKasTersedia = totalPemasukan - totalPengeluaran;
+
+            totalPemasukanEl.textContent = formatCurrency(totalPemasukan);
+            totalPengeluaranEl.textContent = formatCurrency(totalPengeluaran);
+            totalInfaqEl.textContent = formatCurrency(totalInfaq);
+            saldoKasTersediaEl.textContent = formatCurrency(saldoKasTersedia);
+            manualSavingsTotalEl.textContent = formatCurrency(manualSavingsBalance);
+
+            updateChart(totalPemasukan, totalPengeluaran, saldoKasTersedia);
+        };
+
+        const renderTransactions = () => {
+            transactionList.innerHTML = '';
+            
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+
+            const currentMonthTransactions = transactions.filter(transaction => {
+                const transactionDate = new Date(transaction.date);
+                return transactionDate.getMonth() === currentMonth && transactionDate.getFullYear() === currentYear;
+            });
+
+            if (currentMonthTransactions.length === 0) {
+                noTransactionsEl.classList.remove('hidden');
+                noTransactionsEl.textContent = "Belum ada transaksi tercatat untuk bulan ini.";
+                return;
+            } else {
+                noTransactionsEl.classList.add('hidden');
+            }
+
+            const sortedTransactions = [...currentMonthTransactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            sortedTransactions.forEach((transaction) => {
+                const row = document.createElement('tr');
+                row.classList.add('table-row');
+                let amountTextClass;
+                let typeDisplay = '';
+
+                switch (transaction.type) {
+                    case 'pemasukan_gaji':
+                    case 'pemasukan_lain':
+                    case 'tarik_dari_tabungan':
+                        amountTextClass = 'text-green-400';
+                        typeDisplay = transaction.type === 'pemasukan_gaji' ? 'Gaji Bulanan' :
+                                      transaction.type === 'pemasukan_lain' ? 'Pemasukan Lain' : 'Tarik dari Tabungan';
+                        break;
+                    case 'pengeluaran':
+                    case 'pengeluaran_infaq': // New type
+                    case 'transfer_ke_tabungan':
+                    case 'pengeluaran_auto_tabungan': // New type
+                        amountTextClass = 'text-red-400';
+                        typeDisplay = transaction.type === 'pengeluaran' ? 'Pengeluaran' :
+                                      transaction.type === 'pengeluaran_infaq' ? 'Infaq Otomatis' :
+                                      transaction.type === 'transfer_ke_tabungan' ? 'Transfer ke Tabungan' :
+                                      'Tabungan Otomatis';
+                        break;
+                    default:
+                        amountTextClass = '';
+                        typeDisplay = transaction.type;
+                }
+
+                row.innerHTML = `
+                    <td class="px-4 py-3">${new Date(transaction.date).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' })}</td>
+                    <td class="px-4 py-3">${typeDisplay}</td>
+                    <td class="px-4 py-3">${transaction.description}</td>
+                    <td class="px-4 py-3 text-right font-bold ${amountTextClass}">${formatCurrency(transaction.amount)}</td>
+                    <td class="px-4 py-3 text-right text-purple-300">${formatCurrency(transaction.infaqAmount || 0)}</td> <td class="px-4 py-3 text-center flex justify-center space-x-2">
+                        <button onclick="editTransaction('${transaction.id}')" class="btn-secondary text-sm flex items-center">
+                            <span class="icon icon-pencil mr-1"></span> Edit
+                        </button>
+                        <button onclick="deleteTransaction('${transaction.id}')" class="btn-danger text-sm">Hapus</button>
+                    </td>
+                `;
+                transactionList.appendChild(row);
+            });
+            calculateTotals();
+        };
+
+        const saveTransactions = () => {
+            localStorage.setItem(`transactions_${USERNAME}`, JSON.stringify(transactions));
+            localStorage.setItem(`${MANUAL_SAVINGS_LS_KEY}_${USERNAME}`, manualSavingsBalance.toString());
+            localStorage.setItem(AUTO_SAVINGS_PERCENTAGE_LS_KEY, autoSavingsPercentage.toString());
+        };
+
+        const addOrUpdateTransaction = (e) => {
+            e.preventDefault();
+            resetAllFeedbackMessages();
+
+            const type = typeInput.value;
+            const amount = parseFloat(amountInput.value);
+            const description = descriptionInput.value.trim() || (type === 'pemasukan_gaji' ? 'Gaji Bulanan' : type === 'pemasukan_lain' ? 'Pemasukan Lainnya' : 'Pengeluaran Umum');
+
+            if (!type || isNaN(amount) || amount <= 0) {
+                alert('Mohon lengkapi jenis dan jumlah transaksi dengan benar.');
+                return;
+            }
+
+            const isIncomeType = type.startsWith('pemasukan');
+            let infaqDeduction = 0;
+            let autoSavingsDeduction = 0;
+            
+            // If it's an income transaction, calculate and create automated deductions
+            if (isIncomeType) {
+                infaqDeduction = amount * 0.025;
+                autoSavingsDeduction = amount * (autoSavingsPercentage / 100);
+
+                // Create the original income transaction
+                const incomeTransaction = {
+                    id: Date.now(),
+                    date: new Date().toISOString(),
+                    type: type,
+                    amount: amount, // The full amount received
+                    description: description,
+                    infaqAmount: infaqDeduction // Store calculated infaq on original income for reference
+                };
+                transactions.push(incomeTransaction);
+
+                // Create and add Infaq expense transaction
+                if (infaqDeduction > 0) {
+                    const infaqExpenseTransaction = {
+                        id: Date.now() + 1, // Unique ID for infaq expense
+                        date: new Date().toISOString(),
+                        type: 'pengeluaran_infaq',
+                        amount: infaqDeduction,
+                        description: `Potongan Infaq 2.5% dari ${description}`,
+                        infaqAmount: 0 // This is an expense, not income with infaq
+                    };
+                    transactions.push(infaqExpenseTransaction);
+                }
+
+                // Create and add Auto Savings expense transaction & update manual savings balance
+                if (autoSavingsDeduction > 0) {
+                    const autoSavingsExpenseTransaction = {
+                        id: Date.now() + 2, // Unique ID for auto savings expense
+                        date: new Date().toISOString(),
+                        type: 'pengeluaran_auto_tabungan',
+                        amount: autoSavingsDeduction,
+                        description: `Tabungan Otomatis ${autoSavingsPercentage}% dari ${description}`,
+                        infaqAmount: 0
+                    };
+                    transactions.push(autoSavingsExpenseTransaction);
+                    manualSavingsBalance += autoSavingsDeduction; // Directly update manual savings balance
+                }
+            } else {
+                // For non-income transactions (regular expenses), just add them
+                const newTransaction = {
+                    id: Date.now(),
+                    date: new Date().toISOString(),
+                    type: type,
+                    amount: amount,
+                    description: description,
+                    infaqAmount: 0 // Expenses don't have infaq directly
+                };
+                transactions.push(newTransaction);
+            }
+
+            manualSavingsBalance = Math.max(0, manualSavingsBalance); // Clamp savings balance
+            saveTransactions();
+            renderTransactions();
+            cancelEdit();
+        };
+
+        const editTransaction = (id) => {
+            resetAllFeedbackMessages();
+            const transaction = transactions.find(t => t.id === parseInt(id));
+            if (transaction) {
+                // Prevent editing of automatically generated transactions
+                if (['pengeluaran_infaq', 'pengeluaran_auto_tabungan', 'transfer_ke_tabungan', 'tarik_dari_tabungan'].includes(transaction.type)) {
+                    alert('Transaksi otomatis atau transfer tabungan tidak dapat diedit langsung. Harap hapus dan masukkan kembali jika perlu.');
+                    return;
+                }
+
+                typeInput.value = transaction.type;
+                amountInput.value = transaction.amount;
+                descriptionInput.value = transaction.description;
+                editTransactionIdInput.value = transaction.id;
+
+                submitBtn.innerHTML = '<span class="icon icon-pencil mr-2"></span> Perbarui Transaksi';
+                cancelEditBtn.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        };
+
+        const cancelEdit = () => {
+            transactionForm.reset();
+            submitBtn.innerHTML = '<span class="icon icon-plus mr-2"></span> Tambah Transaksi';
+            cancelEditBtn.classList.add('hidden');
+            editTransactionIdInput.value = "";
+        };
+
+        const deleteTransaction = (id) => {
+            if (confirm('Anda yakin ingin menghapus transaksi ini?')) {
+                resetAllFeedbackMessages();
+                const transactionToDelete = transactions.find(t => t.id === parseInt(id));
+
+                if (transactionToDelete) {
+                    // Logic to reverse the effect of special transactions
+                    if (transactionToDelete.type === 'pengeluaran_auto_tabungan') {
+                        manualSavingsBalance -= transactionToDelete.amount;
+                    } else if (transactionToDelete.type === 'transfer_ke_tabungan') {
+                        manualSavingsBalance -= transactionToDelete.amount;
+                    } else if (transactionToDelete.type === 'tarik_dari_tabungan') {
+                        manualSavingsBalance += transactionToDelete.amount;
+                    }
+
+                    // Ensure manualSavingsBalance doesn't go negative
+                    manualSavingsBalance = Math.max(0, manualSavingsBalance);
+                }
+                
+                transactions = transactions.filter(t => t.id !== parseInt(id));
+                saveTransactions();
+                renderTransactions();
+                showMessage(savingsSuccessEl, 'Transaksi berhasil dihapus dan saldo tabungan disesuaikan.', false);
+            }
+        };
+
+        // --- Savings Management Logic (Manual Transfers) ---
+        const executeManualSavingsOperation = (amount, type, description) => {
+            resetAllFeedbackMessages();
+            
+            // Recalculate current cash balance for validation purposes
+            let currentPemasukan = 0;
+            let currentPengeluaran = 0;
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+
+            transactions.forEach(t => {
+                const tDate = new Date(t.date);
+                if (tDate.getMonth() === currentMonth && tDate.getFullYear() === currentYear) {
+                    if (t.type === 'pemasukan_gaji' || t.type === 'pemasukan_lain' || t.type === 'tarik_dari_tabungan') {
+                        currentPemasukan += t.amount;
+                    } else if (t.type === 'pengeluaran' || t.type === 'transfer_ke_tabungan' || t.type === 'pengeluaran_infaq' || t.type === 'pengeluaran_auto_tabungan') {
+                        currentPengeluaran += t.amount;
+                    }
+                }
+            });
+            const availableCash = currentPemasukan - currentPengeluaran;
+
+            if (type === 'transfer_ke_tabungan' && amount > availableCash) {
+                showMessage(savingsErrorEl, `Jumlah transfer (Rp ${formatCurrency(amount)}) melebihi saldo kas tersedia (Rp ${formatCurrency(availableCash)}).`, true);
+                return false;
+            }
+            if (type === 'tarik_dari_tabungan' && amount > manualSavingsBalance) {
+                showMessage(savingsErrorEl, `Jumlah penarikan (Rp ${formatCurrency(amount)}) melebihi saldo tabungan (Rp ${formatCurrency(manualSavingsBalance)}).`, true);
+                return false;
+            }
+
+            if (type === 'transfer_ke_tabungan') {
+                manualSavingsBalance += amount;
+            } else if (type === 'tarik_dari_tabungan') {
+                manualSavingsBalance -= amount;
+            }
+            
+            manualSavingsBalance = Math.max(0, manualSavingsBalance);
+
+            const newTransaction = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                type: type,
+                amount: amount,
+                description: description,
+                infaqAmount: 0
+            };
+            transactions.push(newTransaction);
+            saveTransactions();
+            renderTransactions();
+            showMessage(savingsSuccessEl, `Berhasil ${description.toLowerCase()} Rp ${formatCurrency(amount)}.`, false);
+            savingsAmountInput.value = '';
+            return true;
+        };
+
+        transferToSavingsBtn.addEventListener('click', () => {
+            resetAllFeedbackMessages();
+            const amount = parseFloat(savingsAmountInput.value);
+            if (isNaN(amount) || amount <= 0) {
+                showMessage(savingsErrorEl, 'Jumlah harus lebih dari Rp 0 untuk transfer.', true);
+                return;
+            }
+            executeManualSavingsOperation(amount, 'transfer_ke_tabungan', `Transfer ke Tabungan`);
+        });
+
+        transferAllToSavingsBtn.addEventListener('click', () => {
+            resetAllFeedbackMessages();
+            // Recalculate available cash before transfer to ensure real-time accuracy
+            let currentPemasukan = 0;
+            let currentPengeluaran = 0;
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+            transactions.forEach(t => {
+                const tDate = new Date(t.date);
+                if (tDate.getMonth() === currentMonth && tDate.getFullYear() === currentYear) {
+                    if (t.type === 'pemasukan_gaji' || t.type === 'pemasukan_lain' || t.type === 'tarik_dari_tabungan') {
+                        currentPemasukan += t.amount;
+                    } else if (t.type === 'pengeluaran' || t.type === 'transfer_ke_tabungan' || t.type === 'pengeluaran_infaq' || t.type === 'pengeluaran_auto_tabungan') {
+                        currentPengeluaran += t.amount;
+                    }
+                }
+            });
+            const amountToTransfer = currentPemasukan - currentPengeluaran;
+
+            if (amountToTransfer <= 0) {
+                showMessage(savingsErrorEl, 'Tidak ada saldo kas tersedia untuk ditransfer.', true);
+                return;
+            }
+            executeManualSavingsOperation(amountToTransfer, 'transfer_ke_tabungan', `Transfer Seluruh Saldo Kas ke Tabungan`);
+        });
+
+        withdrawFromSavingsBtn.addEventListener('click', () => {
+            resetAllFeedbackMessages();
+            const amount = parseFloat(savingsAmountInput.value);
+            if (isNaN(amount) || amount <= 0) {
+                showMessage(savingsErrorEl, 'Jumlah harus lebih dari Rp 0 untuk penarikan.', true);
+                return;
+            }
+            executeManualSavingsOperation(amount, 'tarik_dari_tabungan', `Penarikan dari Tabungan`);
+        });
+
+
+        // --- Chart Logic ---
+        const initializeChart = () => {
+            const ctx = financeChartCanvas.getContext('2d');
+            financeChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Pemasukan', 'Pengeluaran', 'Saldo Kas Tersedia'],
+                    datasets: [{
+                        data: [0, 0, 0],
+                        backgroundColor: ['#34D399', '#EF4444', '#63B3ED'],
+                        borderColor: 'var(--bg-card)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: 'var(--text-primary)',
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        title: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) { label += ': '; }
+                                    if (context.parsed !== null) { label += formatCurrency(context.parsed); }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        };
+
+        const updateChart = (income, expenses, cashBalance) => {
+            if (financeChart) {
+                financeChart.data.datasets[0].data = [income, expenses, Math.max(0, cashBalance)];
+                financeChart.data.datasets[0].borderColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-card');
+                financeChart.options.plugins.legend.labels.color = getComputedStyle(document.documentElement).getPropertyValue('--text-primary');
+                financeChart.update();
+            }
+        };
+
+        const updateCurrentMonthDisplay = () => {
+            const date = new Date();
+            const options = { year: 'numeric', month: 'long' };
+            currentMonthDisplayEl.textContent = `Data untuk Bulan: ${date.toLocaleDateString('id-ID', options)}`;
+        };
+
+        // --- View Management (Show Dashboard or Settings) ---
+        const showDashboard = () => {
+            dashboardContent.classList.remove('hidden');
+            settingsPage.classList.add('hidden');
+            dashboardButton.classList.add('hidden'); // Hide dashboard button when on dashboard
+            settingsButton.classList.remove('hidden'); // Show settings button
+            renderTransactions(); // Re-render to ensure latest data and totals are displayed
+            resetAllFeedbackMessages();
+        };
+
+        const showSettings = () => {
+            dashboardContent.classList.add('hidden');
+            settingsPage.classList.remove('hidden');
+            dashboardButton.classList.remove('hidden'); // Show dashboard button when on settings
+            settingsButton.classList.add('hidden'); // Hide settings button
+            
+            // Populate form fields in settings
+            oldUsernameInput.value = USERNAME;
+            oldPasswordInput.value = '';
+            newUsernameInput.value = '';
+            newPasswordInput.value = '';
+            confirmNewPasswordInput.value = '';
+            autoSavingsPercentageInput.value = autoSavingsPercentage; // Populate auto savings percentage
+            
+            resetAllFeedbackMessages();
+            
+            // Set current theme radio button
+            document.querySelector(`input[name="theme"][value="${currentTheme}"]`).checked = true;
+        };
+
+        settingsButton.addEventListener('click', showSettings);
+        dashboardButton.addEventListener('click', showDashboard); // Event listener for new dashboard button
+
+
+        // --- Theme Switching Logic ---
+        const applyTheme = (theme) => {
+            document.body.classList.toggle('light-mode', theme === 'light');
+            localStorage.setItem(THEME_LS_KEY, theme);
+            currentTheme = theme;
+            updateChart(
+                parseFloat(totalPemasukanEl.textContent.replace(/[^0-9,-]+/g, "").replace(",", ".")),
+                parseFloat(totalPengeluaranEl.textContent.replace(/[^0-9,-]+/g, "").replace(",", ".")),
+                parseFloat(saldoKasTersediaEl.textContent.replace(/[^0-9,-]+/g, "").replace(",", "."))
+            );
+        };
+
+        themeRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                applyTheme(e.target.value);
+                showMessage(themeSuccessEl, `Tema berhasil diubah ke ${e.target.value === 'dark' ? 'Gelap' : 'Terang'}.`);
+            });
+        });
+
+        // --- Login/Logout Logic ---
+        const checkLoginStatus = () => {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            applyTheme(currentTheme);
+            if (isLoggedIn) {
+                showApp();
+            } else {
+                showLogin();
+            }
+        };
+
+        const showLogin = () => {
+            loginPage.classList.remove('hidden');
+            mainApp.classList.add('hidden');
+            mainApp.classList.remove('opacity-0');
+            resetAllFeedbackMessages();
+            usernameInput.value = '';
+            passwordInput.value = '';
+            
+            // Clear current user's data on explicit logout/reset to ensure fresh state for next login
+            transactions = [];
+            manualSavingsBalance = 0;
+            // Note: credentials are *not* reset here unless full reset is performed via button
+            saveTransactions(); // Persist empty data for current user (important for clean slate)
+        };
+
+        const showApp = () => {
+            loginPage.classList.add('hidden');
+            mainApp.classList.remove('hidden');
+            setTimeout(() => {
+                mainApp.classList.remove('opacity-0');
+            }, 50);
+
+            // Load all relevant data for the *current* user
+            transactions = JSON.parse(localStorage.getItem(`transactions_${USERNAME}`)) || [];
+            manualSavingsBalance = parseFloat(localStorage.getItem(`${MANUAL_SAVINGS_LS_KEY}_${USERNAME}`)) || 0;
+            manualSavingsPercentage = parseFloat(localStorage.getItem(AUTO_SAVINGS_PERCENTAGE_LS_KEY)) || 0;
+            
+            manualSavingsBalance = Math.max(0, manualSavingsBalance); // Ensure savings never loads as negative if corrupted
+
+            updateCurrentMonthDisplay();
+            showDashboard();
+        };
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            resetAllFeedbackMessages();
+            const enteredUsername = usernameInput.value;
+            const enteredPassword = passwordInput.value;
+
+            if (enteredUsername === USERNAME && enteredPassword === PASSWORD) {
+                localStorage.setItem('isLoggedIn', 'true');
+                showApp();
+            } else {
+                showMessage(loginError, 'Nama pengguna atau kata sandi salah.<br>Pastikan "wildan" dan "admin123".', true);
+                passwordInput.value = '';
+            }
+        });
+
+        logoutButton.addEventListener('click', () => {
+            localStorage.setItem('isLoggedIn', 'false');
+            mainApp.classList.add('opacity-0');
+            setTimeout(() => {
+                showLogin();
+            }, 500);
+        });
+
+        // --- Change Access Login Logic ---
+        const changeLoginAccess = (e) => {
+            e.preventDefault();
+            resetAllFeedbackMessages();
+
+            const oldUsername = oldUsernameInput.value;
+            const oldPassword = oldPasswordInput.value;
+            const newUsername = newUsernameInput.value;
+            const newPassword = newPasswordInput.value;
+            const confirmNewPassword = confirmNewPasswordInput.value;
+
+            if (oldUsername !== USERNAME || oldPassword !== PASSWORD) {
+                showMessage(changeLoginErrorEl, 'Nama pengguna lama atau kata sandi lama salah.', true);
+                return;
+            }
+
+            if (!newUsername || !newPassword || !confirmNewPassword) {
+                showMessage(changeLoginErrorEl, 'Nama pengguna baru dan kata sandi baru tidak boleh kosong.', true);
+                return;
+            }
+            if (newPassword !== confirmNewPassword) {
+                showMessage(changeLoginErrorEl, 'Kata sandi baru dan konfirmasi kata sandi tidak cocok.', true);
+                return;
+            }
+            if (newUsername === USERNAME && newPassword === PASSWORD) {
+                showMessage(changeLoginErrorEl, 'Tidak ada perubahan yang dilakukan. Kredensial baru sama dengan yang lama.', true);
+                return;
+            }
+
+            // Handle data migration if username changes
+            if (newUsername !== USERNAME) {
+                // Migrate transactions data
+                const oldTransactionsData = JSON.parse(localStorage.getItem(`transactions_${USERNAME}`)) || [];
+                localStorage.setItem(`transactions_${newUsername}`, JSON.stringify(oldTransactionsData));
+                localStorage.removeItem(`transactions_${USERNAME}`);
+
+                // Migrate manual savings data
+                const oldSavingsData = parseFloat(localStorage.getItem(`${MANUAL_SAVINGS_LS_KEY}_${USERNAME}`)) || 0;
+                localStorage.setItem(`${MANUAL_SAVINGS_LS_KEY}_${newUsername}`, oldSavingsData.toString());
+                localStorage.removeItem(`${MANUAL_SAVINGS_LS_KEY}_${USERNAME}`);
+            }
+
+            // Update credentials in localStorage and in-memory variables
+            localStorage.setItem(USERNAME_LS_KEY, newUsername);
+            localStorage.setItem(PASSWORD_LS_KEY, newPassword);
+            
+            USERNAME = newUsername;
+            PASSWORD = newPassword;
+
+            showMessage(changeLoginSuccessEl, 'Akses login berhasil diperbarui! Silakan login kembali dengan kredensial baru Anda.', false);
+
+            changeAccessForm.reset();
+            
+            localStorage.setItem('isLoggedIn', 'false');
+            mainApp.classList.add('opacity-0');
+            setTimeout(() => {
+                showLogin();
+            }, 1000);
+        };
+
+        // --- Data Reset Functions ---
+        const resetCurrentMonthTransactions = () => {
+            if (!confirm('Anda yakin ingin menghapus SEMUA transaksi untuk bulan ini? Tindakan ini tidak dapat dibatalkan.')) {
+                return;
+            }
+            resetAllFeedbackMessages();
+
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+
+            // Filter out transactions of the current month
+            const transactionsToKeep = transactions.filter(transaction => {
+                const transactionDate = new Date(transaction.date);
+                return !(transactionDate.getMonth() === currentMonth && transactionDate.getFullYear() === currentYear);
+            });
+
+            transactions = transactionsToKeep;
+            saveTransactions();
+            renderTransactions();
+            showMessage(themeSuccessEl, 'Semua transaksi bulan ini berhasil direset.', false); // Using themeSuccessEl for general settings success
+            showDashboard();
+        };
+
+        const resetAllData = () => {
+            if (!confirm('PERINGATAN: Anda yakin ingin menghapus SELURUH data transaksi, tabungan, dan kredensial login? Tindakan ini tidak dapat dibatalkan.')) {
+                return;
+            }
+            resetAllFeedbackMessages();
+
+            // Clear all relevant localStorage keys
+            localStorage.removeItem(`transactions_${USERNAME}`);
+            localStorage.removeItem(`${MANUAL_SAVINGS_LS_KEY}_${USERNAME}`);
+            localStorage.removeItem(USERNAME_LS_KEY);
+            localStorage.removeItem(PASSWORD_LS_KEY);
+            localStorage.removeItem(THEME_LS_KEY);
+            localStorage.removeItem(AUTO_SAVINGS_PERCENTAGE_LS_KEY);
+
+            // Reset in-memory data to default state
+            transactions = [];
+            manualSavingsBalance = 0;
+            USERNAME = 'wildan';
+            PASSWORD = 'admin123';
+            currentTheme = 'dark';
+            autoSavingsPercentage = 0;
+
+            showMessage(loginError, 'Seluruh data aplikasi berhasil direset. Silakan login kembali dengan kredensial default.', false);
+            
+            localStorage.setItem('isLoggedIn', 'false');
+            mainApp.classList.add('opacity-0');
+            setTimeout(() => {
+                showLogin();
+                applyTheme('dark');
+            }, 1000);
+        };
+
+        // --- Automation Settings Logic ---
+        automationSettingsForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            resetAllFeedbackMessages();
+
+            let percentage = parseFloat(autoSavingsPercentageInput.value);
+            if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+                showMessage(automationErrorEl, 'Persentase harus angka antara 0 dan 100.', true);
+                return;
+            }
+            autoSavingsPercentage = percentage;
+            saveTransactions(); // Saves the updated percentage
+            showMessage(automationSuccessEl, 'Pengaturan otomatisasi berhasil disimpan.', false);
+        });
+
+        // --- Event Listeners ---
+        transactionForm.addEventListener('submit', addOrUpdateTransaction);
+        cancelEditBtn.addEventListener('click', cancelEdit);
+        savingsForm.addEventListener('submit', (e) => e.preventDefault()); // Prevent form submission for savings form
+        
+        // Initial setup
+        initializeChart();
+        checkLoginStatus(); // This will apply theme and show correct page
+    </script>
+</body>
+</html>
